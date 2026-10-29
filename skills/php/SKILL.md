@@ -10,16 +10,21 @@ description: Kevin's vanilla PHP standards — KPT library conventions,
 
 Reference implementations: the kevinpirnie/kpt-* packagist libraries
 (kpt-database, kpt-utils, kpt-logger, kpt-cache, kpt-router,
-kpt-datatables). Consumption example: kpirnie/kptv-filter-app.
+kpt-datatables — repos kpirnie/kp-database, kp-php-utils, kp-logger,
+kp-cache, kp-router, kp-datatables). Consumption examples:
+kpirnie/kptv-filter-app, kpirnie/kp-memos.
 
 ## File conventions
 - `declare(strict_types=1);` after the file docblock (current standard;
   add when substantially editing older files that lack it)
 - Namespace: `KPT` for libraries; wrap class definitions in
-  `if (! class_exists('\KPT\ClassName')) {` guards
+  `if (! class_exists('\KPT\ClassName', false)) {` guards (traits:
+  `trait_exists`)
 - File-level docblock with title, description, and tags:
   @since <PHP version — NOT package version>, @author Kevin Pirnie
-  <me@kpirnie.com>, @package KP Library
+  <me@kpirnie.com>, @package KP Library. (kpt-datatables is the exception:
+  `@since 1.0.0`, `@package KPT\DataTables`; kp-memos uses
+  `@package KP Memos`.)
 - Class-level docblock repeats the tags, plus @access, and documents
   notable @property entries and array shapes in <code> blocks
   (response/options array shapes documented inline is house style)
@@ -27,38 +32,47 @@ kpt-datatables). Consumption example: kpirnie/kptv-filter-app.
   @return, @throws where applicable
 
 ## Code style
-- PSR-12 enforced: `composer cs-check` / `cs-fix` (phpcs/phpcbf) must
-  pass on any change
-- PHP 8.2+ minimum: typed properties, constructor promotion, readonly,
-  match, nullsafe, `mixed` where honest
+- PSR-12 enforced: `composer cs-check` / `cs-fix` (phpcs/phpcbf
+  `--standard=PSR12`) must pass on any change
+- PHP 8.4+ for the libraries (`"php": ">=8.4"`); kpt-utils stays on
+  `>=8.2`, kp-memos targets 8.5. Typed properties, constructor promotion,
+  readonly, match, nullsafe, `mixed` where honest
 - Conversational lowercase step comments between docblocks:
   "// throw it under my namespace", "// hold the database handle object"
   — same voice as all Kevin's code; comment most logical steps
 - Patterns in use: fluent chaining (query builder), named-instance
-  singleton/connection pools (static $instances keyed by name),
-  consistent response-array returns with an isError() check pattern
-  (modeled after WordPress's HTTP API)
-- Database access: PDO only, prepared statements always, FETCH_OBJ
+  connections (`protected static array $instances` keyed by name, e.g.
+  `Database::getInstance('default', $settings)`), consistent
+  response-array returns with an `isError()` check (`KPT\Curl`, modeled
+  after WordPress's HTTP API)
+- Database access: PDO only, prepared statements always, `FETCH_OBJ`
   default
 
 ## Packaging (packagist libraries)
-composer.json must include: name kevinpirnie/<pkg>, type library,
-keywords, homepage, MIT license, funding block (paypal + ko-fi),
-authors, php >=8.2 + ext requirements, require-dev with phpunit ^11
-and squizlabs/php_codesniffer, archive.exclude (tests, coverage,
-.github, phpunit config), psr-4 autoload "KPT\\" => "src/",
-autoload-dev "KPT\\Tests\\", scripts (cs-check, cs-fix, test,
-test-coverage), config (sort-packages, optimize-autoloader,
-preferred-install dist), support links.
+composer.json carries: name `kevinpirnie/<pkg>`, type library, keywords,
+homepage, MIT license, funding block (paypal + ko-fi), authors, `php`
+requirement + ext requirements, require-dev with `phpunit/phpunit ^13`
+(where the repo has tests) and `squizlabs/php_codesniffer`, psr-4
+`"KPT\\" => "src/"` (kpt-datatables: `src/class/`), autoload-dev
+`"KPT\\Tests\\" => "tests/"`, scripts (`cs-check`, `cs-fix`, plus `test`
+/ `test-coverage` where there are tests), config (`sort-packages`,
+`optimize-autoloader`, `preferred-install: dist`), support links.
+kpt-database also has `archive.exclude` (tests, coverage, .github,
+.phpunit.cache, phpunit.xml).
 
 - Inter-package deps use ^caret constraints (e.g. kpt-logger ^1.0)
-- Tests in tests/ mirroring src/; new public methods get PHPUnit
-  coverage
+- Existing tests live in `tests/` (grouped by area, e.g. kp-database's
+  Binding/Crud/Transaction tests); don't add tests or test
+  infrastructure unless asked
+- CI (`.github/workflows/ci.yml`): `composer validate --strict`,
+  `cs-check`, and `test` where defined. Release (`release.yml`): tag
+  `v*` → GitHub release + Packagist update
 
 ## Apps consuming the libraries
-- MVC-lite: index.php front controller + kpt-router, controllers/,
-  views/, assets/; business logic in controllers or KPT library
-  classes, not views
+- MVC-lite: `index.php` front controller + kpt-router, controllers,
+  views, assets (kptv-filter-app: `controllers/`, `views/`; kp-memos:
+  `app/Controllers/`, `app/views/`, `app/Core/`); business logic in
+  controllers or KPT library classes, not views
 - Never modify anything under vendor/ — changes to kpt-* packages
   happen in their own repos and version-bump through composer
 
