@@ -10,7 +10,7 @@ Self-hosted PHP app for managing IPTV providers (Xtream Codes and M3U), filterin
 ## Stack
 - PHP `>=8.4` (`config.platform.php` pinned to `8.4`), MVC-lite front controller, `vendor/` committed
 - KPT libraries via Composer `dev-main`: `kevinpirnie/kpt-router`, `kpt-datatables`, `kpt-utils` (plus their deps `kpt-database`, `kpt-cache`, `kpt-logger`); PHPMailer 7
-- DB: SQLite or MySQL/MariaDB per `config.json` (`database.driver`, `tbl_prefix` `kptv_`); `assets/schema.sql` is the MySQL schema (includes stored procedures used by the CLI cleanup action)
+- DB: MySQL/MariaDB (readme), configured in `config.json` `database` (`driver`, `server`, `port`, `schema`, `username`, `password`, `charset`, `collation`, `tbl_prefix` `kptv_`) and passed straight to `KPT\Database`; `assets/schema.sql` is the schema (includes stored procedures used by the CLI cleanup action)
 - Front-end: plain CSS/JS in `assets/`, minified by `npm run build` (clean-css + terser → `kptv.min.css`, `kptv.min.js`)
 - `my_epg/` — `epg-sync`, a standalone Go tool that merges and dedupes every XMLTV file in a directory into one `epg.xml` (`--input`, `--output`)
 
@@ -35,8 +35,4 @@ Self-hosted PHP app for managing IPTV providers (Xtream Codes and M3U), filterin
 - `mainkey` / `mainsecret` encrypt and decrypt IDs used in exported URLs and app auth tokens (`controllers/kptv-static.php`)
 - The login cookie is set `secure: true`, so HTTPS is expected
 - `/proxy/stream?url=` (`controllers/kptv-proxy.php`) rewrites HLS playlists for browser playback; the readme warns it can be abused if left open
-- `composer.json` says `"license": "proprietary"`; `LICENSE` is MIT
-
-## Readme vs repo
-- The readme's SQLite setup imports `assets/schema_sqlite.sql`, which is not in the repo (only `assets/schema.sql`)
-- The readme's Maintenance mode section points at `.maintenance.json`, which is not in the repo
+- License: MIT (`composer.json` and `LICENSE`)

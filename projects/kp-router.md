@@ -26,6 +26,3 @@ Routing library used by kptv-filter-app and kp-memos (both require `kevinpirnie/
 - File and class docblocks: `@since 8.4`, `@author Kevin Pirnie <me@kpirnie.com>`, `@package KP Library`
 - Classes guarded by `class_exists`, traits by `trait_exists`; `// throw it under my namespace`-style step comments
 - Route arrays in the readme use `'method'`, `'path'`, `'handler'` (`'HomeController@index'`), plus middleware keys
-
-## Repo inconsistency
-- `composer.json` `name` is `kpirnie/kpt-router` (vendor `kpirnie`); the readme install line and the apps use `kevinpirnie/kpt-router`

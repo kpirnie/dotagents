@@ -15,7 +15,7 @@ WordPress.org plugin (`kp-agent-ready`) that makes a site discoverable by AI age
 - `source/` — the plugin you edit
 - `build.sh` (`npm run build`) — verifies plugin header `Version`, readme `Stable tag` and `KP_AGENT_READY_VERSION` all match, rsyncs PHP + readme + LICENSE into `distribute/`, runs `wp i18n make-pot` into `distribute/languages/`
 - `distribute/` — build output, committed; `.github/workflows/release.yml` zips it into a GitHub release on `v*` tags
-- Root `composer.json`/`package.json` carry their own (stale) version fields — they are not part of the version check
+- Root `composer.json` and `package.json` also carry `"version"` (kept in step by hand; `build.sh` does not check them)
 
 ## Map
 - `source/kp-agent-ready.php` — header, constants, autoloader, `plugins_loaded` → `Plugin::instance`, activation/deactivation, multisite network-activation guard
@@ -34,7 +34,6 @@ WordPress.org plugin (`kp-agent-ready`) that makes a site discoverable by AI age
 
 ## Behaviour in the code
 - `build.sh` exits non-zero unless the header `Version`, readme `Stable tag` and `KP_AGENT_READY_VERSION` all match, and if `Plugin Name` / `Text Domain` can't be read; it `rm -rf`s and rebuilds `distribute/` every run
-- Root `composer.json` and `package.json` carry `"version": "1.1.98"` while the plugin is `1.2.08`; `build.sh` does not check them
 - llms.txt AJAX regenerate (`LlmsTxt::ajaxRegenerate`): `check_ajax_referer(self::AJAX_ACTION, 'nonce')` (nonce `kp_agent_ready_regenerate_llms`) then `manage_options`; settings go through `register_setting(..., ['sanitize_callback' => [$this, 'sanitize']])`
 - llms.txt only regenerates on transitions into/out of `publish` and queries `'post_status' => 'publish'`; Markdown negotiation returns early for password-protected posts
 - Network activation is blocked: `admin_init` → `deactivate_plugins` + `wp_die`

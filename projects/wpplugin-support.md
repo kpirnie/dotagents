@@ -42,6 +42,3 @@ WordPress plugin (`kp-support`) providing a ticket system with AJAX threaded rep
 - Chat AJAX: `kpts_chat_start`, `_send`, `_poll`, `_queue`, `_assign`, `_convert`, `_close`, `_offline_ticket`; only the guest subset is also registered `wp_ajax_nopriv_`, and guests carry a signed chat cookie (`Helpers\ChatGuest`); posting is throttled per actor via the `kpts_chat_rate_<id>` transient (`chat_rate_limit`, default 20)
 - Reply HTML is sanitized with `wp_kses` in `Replies::add()`
 - readme.txt: Contributors `kevp75`, Requires at least 6.8, Tested up to 7.1, Requires PHP 8.2, GPLv3 or later
-
-## Repo inconsistencies
-- `package.json` says `"version": "1.0.20"` and `"license": "MIT"`; the plugin header is `1.1.03`, GPL-3.0-or-later

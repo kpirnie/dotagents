@@ -25,6 +25,3 @@ Static multi-tier cache that discovers which tiers are available, prioritises th
 - File and class docblocks: `@since 8.4`, `@author Kevin Pirnie <me@kpirnie.com>`, `@package KP Library`
 - Every class/trait wrapped in `if (! class_exists('\KPT\...', false))` / `trait_exists`
 - `// throw it under my namespace`-style step comments
-
-## Readme vs repo
-- The readme's CLI section runs `php vendor/kevinpirnie/kpt-cache/cache/cleaner.php`; the file in the repo is `src/cache/cleaner.php`

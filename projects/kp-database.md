@@ -27,6 +27,3 @@ Fluent PDO database wrapper published to Packagist as `kevinpirnie/kpt-database`
 - Method docblocks: name, description, `@since`, `@author`, `@package`, `@param`, `@return`, `@throws`
 - `// throw it under my namespace`-style step comments; camelCase public methods (readme: "PSR-12 Compliant")
 - Logging through static `Logger::debug()` / `Logger::error()` (readme: a `KPT\Logger` with those static methods must be available)
-
-## Repo inconsistency
-- `composer.json` `description` says "interact with MySQL databases"; the readme says multi-driver (MySQL, PostgreSQL, SQLite, SQL Server, Oracle)

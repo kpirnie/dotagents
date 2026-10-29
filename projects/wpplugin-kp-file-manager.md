@@ -36,6 +36,3 @@ WordPress plugin (`kp-file-manager`) to browse, edit, upload, rename, delete and
 - `kfm_blocked_exts` (default `php,phtml,phar,php3,php4,php5,php7,phps,pht,exe,sh,pl,cgi,htaccess,htpasswd,shtml,asis`) is enforced in `create_file`, `rename`, `copy` and `upload`
 - Audit log entries are written for bad referer, role-permission denial, rate-limit blocks, operation errors, successful operations, and downloads
 - Version is set in two places: header `Version` and `KFM_VERSION` (both `1.0.60`)
-
-## Repo inconsistency
-- `includes/class-kfm-updater.php` sets `GH_REPO = 'kpirnie/wppluggin-kp-file-manager'` (double "g"); the repo is `kpirnie/wpplugin-kp-file-manager`
