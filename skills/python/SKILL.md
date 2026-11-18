@@ -7,11 +7,7 @@ description: Kevin's Python coding style and conventions — comment-heavy,
 
 # Kevin's Python Conventions
 
-Reference implementations (current standard): kpirnie/kptv-weather,
-kpirnie/wp-malware-scanner, kpirnie/visual-regressor, kpirnie/kp-wp-vulnscan.
-kpirnie/kptv-restreamer is the older style (docstrings above the def,
-`logging.basicConfig` in `main.py`); kpirnie/kptv-fast is older still
-(short docstrings, unpinned requirements).
+Reference implementation: kpirnie/kptv-restreamer (current standard).
 
 ## File headers
 Every module starts with shebang + docstring containing a title line,
@@ -25,7 +21,7 @@ a short description, and phpDoc-style tags:
 
     @package KPTV Restreamer
     @author Kevin Pirnie <me@kpirnie.com>
-    @copyright Copyright (c) 2026
+    @copyright Copyright (c) 2025
     """
 
 ## Comments — the defining trait
@@ -69,25 +65,19 @@ editing a function, move its docstring inside; otherwise leave as-is.
 ## Structure
 - Modular packages by responsibility: core/, services/, routes/ (or api/),
   models/, sources/, utils/ — with __init__.py exports
-- Config: environment variables with a project prefix (`KPTVW_`, `VREG_`,
-  `KPWPVS_`) read into typed config objects; kptv-restreamer reads a YAML
-  file (`yaml.safe_load`) into dataclasses
+- Config: YAML file parsed into typed config objects (pydantic/dataclass)
 - Async (FastAPI/aiohttp) for new service work; requests.Session with
   HTTPAdapter pooling + urllib3 Retry for sync HTTP
 
 ## Logging
 - `logger = logging.getLogger(__name__)` at module level
-- Central setup_logging() keyed on a DEBUG switch (the `DEBUG` env var in
-  kptv-weather and wp-malware-scanner, a DB setting in visual-regressor):
-  DEBUG level + verbose format (funcName:lineno) when true, INFO + clean
-  format otherwise
+- Central setup_logging() keyed on DEBUG env var: DEBUG level + verbose
+  format (funcName:lineno) when true, INFO + clean format otherwise
 - Third-party loggers (urllib3, requests, etc.) forced to WARNING in
   non-debug mode
 
 ## Deployment
-- Docker-first: `Dockerfile` (kp-wp-vulnscan: `Containerfile`) plus a
-  compose example in the repo root (`docker-compose-example.yaml`;
-  visual-regressor: `compose-example.yaml`)
+- Docker-first: Dockerfile + docker-compose-example.yaml in repo root
 - requirements.txt with pinned versions for new projects
 - readme.md (lowercase), LICENSE in root
 
