@@ -59,6 +59,33 @@ for dir in "$REPO"/skills/*/; do
     echo "packaged skills/$name"
 done
 
+
+# setup our shared working rules skill
+mkdir -p "$STAGING/skills/working-rules/references"
+
+# copy the shared rules into the skill
+cp "$REPO/AGENTS.md" "$STAGING/skills/working-rules/references/AGENTS.md"
+
+# create the skill definition
+cat > "$STAGING/skills/working-rules/SKILL.md" <<'EOF'
+---
+name: working-rules
+description: Kevin Pirnie's shared AI working rules for code reviews, development, debugging, and project work. Use when working on Kevin's repositories or following his development workflow.
+---
+
+# Kevin's Working Rules
+
+Read `references/AGENTS.md` before performing development work.
+
+These rules govern workflow, communication, code changes, security boundaries, and output formatting.
+
+Apply the relevant language, framework, and project-specific skills alongside these rules.
+
+Never override the user's explicit instructions.
+EOF
+
+echo "packaged skills/working-rules"
+
 # remove any previous plugin package
 rm -f "$OUTPUT"
 
