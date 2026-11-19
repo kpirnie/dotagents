@@ -39,7 +39,7 @@ dotagents/
 │   ├── python/
 │   ├── wp-plugin/
 │   ├── wp-theme/
-│   ├── wordpress-security/
+│   ├── wp-security/
 │   ├── updates-audit/
 │   ├── updates-completed/
 │   ├── updates-commit-message/
@@ -106,11 +106,11 @@ Skills are grouped by responsibility and can be combined where appropriate.
 |---|---|
 | [`wp-plugin`](skills/wp-plugin/SKILL.md) | WordPress plugin development, architecture, PHPDoc, security, naming, and WordPress.org compliance. |
 | [`wp-theme`](skills/wp-theme/SKILL.md) | WordPress theme development, templates, PHPDoc, assets, performance, accessibility, and WordPress conventions. |
-| [`wordpress-security`](skills/wordpress-security/SKILL.md) | Security auditing, vulnerability analysis, authorization, nonces, input validation, escaping, and targeted hardening. |
+| [`wp-security`](skills/wp-security/SKILL.md) | Security auditing, vulnerability analysis, authorization, nonces, input validation, escaping, and targeted hardening. |
 
 The `wp-plugin` and `wp-theme` skills define coding conventions for their respective projects.
 
-The `wordpress-security` skill supplements either one when performing security-sensitive work.
+The `wp-security` skill supplements either one when performing security-sensitive work.
 
 ### WordPress Maintenance
 
@@ -138,8 +138,8 @@ For example:
 |---|---|
 | Develop a WordPress plugin | `wp-plugin` |
 | Develop a WordPress theme | `wp-theme` |
-| Audit WordPress plugin security | `wp-plugin` + `wordpress-security` |
-| Audit WordPress theme security | `wp-theme` + `wordpress-security` |
+| Audit WordPress plugin security | `wp-plugin` + `wp-security` |
+| Audit WordPress theme security | `wp-theme` + `wp-security` |
 | Develop a standalone PHP application | `php` |
 | Generate a WordPress update report | `updates-audit` or `updates-completed` |
 | Prepare a WordPress update commit | `updates-commit-message` |
@@ -274,7 +274,7 @@ dist/
 ├── python.zip
 ├── wp-plugin.zip
 ├── wp-theme.zip
-├── wordpress-security.zip
+├── wp-security.zip
 ├── updates-audit.zip
 ├── updates-completed.zip
 ├── updates-commit-message.zip
