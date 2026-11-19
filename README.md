@@ -52,7 +52,8 @@ dotagents/
 │   └── skills -> ../skills
 └── scripts/
     ├── install.sh
-    └── package-skills.sh
+    ├── package-skills.sh
+    └── package-plugin.sh
 ```
 
 ### Working Rules
@@ -304,6 +305,86 @@ Otherwise, the relevant instructions can be supplied as project context:
 - `projects/<repository-name>.md` for project-specific information.
 
 Custom skill support and settings locations may vary by account and product version.
+
+### Unified ChatGPT Plugin
+
+All development skills and shared working rules can be packaged into a single portable Agent Plugin.
+
+Run:
+
+```bash
+./scripts/package-plugin.sh
+```
+
+This generates:
+
+```text
+dist/
+└── dotagents-plugin.zip
+```
+
+The archive contains:
+
+```text
+dotagents-plugin.zip
+├── plugin.json
+└── skills/
+    ├── working-rules/
+    │   ├── SKILL.md
+    │   └── references/
+    │       └── AGENTS.md
+    ├── go/
+    ├── php/
+    ├── python/
+    ├── wp-plugin/
+    ├── wp-theme/
+    ├── wp-security/
+    ├── updates-audit/
+    ├── updates-completed/
+    ├── updates-commit-message/
+    └── project-handoff/
+```
+
+The packaging script automatically discovers and includes all skills containing a `SKILL.md` file.
+
+#### Shared Working Rules
+
+The plugin generates an additional `working-rules` skill containing a copy of the repository's `AGENTS.md`.
+
+This keeps `AGENTS.md` as the single source of truth without duplicating its contents across individual skills.
+
+The `working-rules` skill instructs the AI assistant to load these rules when performing development work.
+
+**Note:** Plugin skills are activated contextually. Packaging `AGENTS.md` does not guarantee its instructions will be applied globally in every ChatGPT conversation.
+
+#### Installation
+
+Upload `dist/dotagents-plugin.zip` through the plugin installation interface of a compatible AI client.
+
+Plugin upload availability depends on the client and account permissions.
+
+The package does not require an MCP server or external service.
+
+#### Updating the Plugin
+
+After modifying skills or `AGENTS.md`, regenerate the package:
+
+```bash
+./scripts/package-plugin.sh
+```
+
+Reinstall or update the plugin in the target client to use the latest packaged instructions.
+
+The plugin archive is a snapshot of the repository at packaging time. It does not automatically synchronize changes from GitHub.
+
+#### Individual Skills vs. Unified Plugin
+
+| Script | Output | Purpose |
+|---|---|---|
+| `package-skills.sh` | One ZIP per skill | Individual skill uploads |
+| `package-plugin.sh` | One ZIP containing all skills | Unified plugin installation |
+
+Both packaging methods remain available.
 
 ## Adding Skills
 
