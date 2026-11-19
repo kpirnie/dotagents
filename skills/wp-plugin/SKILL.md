@@ -7,17 +7,26 @@ description: Kevin's WordPress plugin development standards and wp.org
 
 # Kevin's WordPress Plugin Standards
 
-Reference implementation: kpirnie/wppplugin-kp-agent-ready (current standard).
-Older plugins (the-cache-purger, security-header-generator) use a legacy
-source/dist + work/inc layout — match their existing style when editing
-them; use the current standard for new work.
+Reference implementation: kpirnie/wpplugin-kp-agent-ready (current standard;
+kpirnie/wpplugin-support follows it too).
+Older plugins (wpplugin-the-cache-purger, wpplugin-security-header-generator,
+wpplugin-stargazers) use a legacy `work/` + `work/inc/` layout with
+`KCP_*` / `KP_*` / `SGU_*` classes autoloaded by a Composer classmap — match
+their existing style when editing them; use the current standard for new work.
+
+Repo layout for all of them: the plugin lives in `source/`; `build.sh`
+(also `npm run build` where `package.json` defines it) regenerates
+`distribute/` (committed), and
+`.github/workflows/release.yml` zips `distribute/` into a GitHub release on
+`v*` tags. kpirnie/wpplugin-kp-file-manager is the exception: no build, the
+repo root is the plugin, classes in `includes/class-kfm-*.php`.
 
 ## Architecture (current standard)
 - Namespaced: `KP\<PluginName>\` with a hand-rolled spl_autoload_register
   PSR-4 autoloader in the main file (no composer dependency at runtime)
-- `src/` layout: Plugin.php (final, singleton via instance(), hooked on
-  plugins_loaded), Modules/ (each extends AbstractModule with a
-  register() method), Settings/, Helpers/
+- `source/src/` layout: Plugin.php (final, singleton via instance(), hooked
+  on plugins_loaded), Modules/ (each extends AbstractModule: abstract
+  register(), protected opt()), Settings/, Helpers/
 - Constants: `defined('X') || define('X', ...)` pattern for VERSION,
   FILE, DIR, URL — prefixed KP_<PLUGIN>_
 - register_activation_hook / register_deactivation_hook on Plugin class
@@ -30,7 +39,8 @@ them; use the current standard for new work.
 - Every PHP file: `defined('ABSPATH') || die('No direct script access
   allowed');` immediately after the opening docblock
 - File-level AND class-level phpDoc blocks, both carrying:
-  @since, @author Kevin Pirnie, @package <Plugin Name>
+  @since, @author Kevin Pirnie, @package <Plugin Name> (both
+  `<me@kpirnie.com>` and `<iam@kevinpirnie.com>` appear — match the file)
 - Method docblocks: description, @since, @access, @param (aligned),
   @return — full and formal
 - Between the formal docblocks, comments are conversational and
@@ -38,7 +48,7 @@ them; use the current standard for new work.
   we're actually supposed to be doing this". Match this voice; comment
   most logical steps.
 - uninstall.php: guard with WP_UNINSTALL_PLUGIN check + plugin_basename
-  match, register its OWN autoloader (composer/plugin context absent),
+  match, register its OWN autoloader (plugin bootstrap is not loaded),
   remove all options, generated files, and scheduled events
 
 ## Security (wp.org review + Wordfence will catch violations)
@@ -74,7 +84,14 @@ them; use the current standard for new work.
 ## Rules
 - Match the era/style of the plugin being edited; no cross-era
   refactoring unless asked
-- Multisite awareness: current plugins block network activation with an
-  admin_init deactivate + wp_die guard — preserve/replicate this
-- Minimal diffs; never touch version numbers, build artifacts (dist/),
-  or refresh.sh unless asked
+- Multisite awareness: kp-agent-ready blocks network activation with an
+  admin_init deactivate + wp_die guard, and The Cache Purger and Security
+  Header Generator wp_die on
+  network activation in their activation hook — preserve/replicate this.
+  kp-file-manager is the exception: it supports network activation with a
+  per-site disable list (`kfm_disabled_sites`)
+- Minimal diffs; never touch version numbers, `distribute/`, or `build.sh`
+  unless asked. When a version bump is asked for, move every place it lives
+  together (header `Version`, readme `Stable tag`, and the `*_VERSION`
+  constant where the plugin defines one — the current-standard `build.sh`
+  fails on a mismatch)
