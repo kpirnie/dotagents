@@ -1,0 +1,79 @@
+name: Build plugin installer
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Build and verify installer ZIP
+        shell: bash
+        run: |
+          staging="$(mktemp -d)"
+          marketplace="$staging/dotagents"
+          plugin="$marketplace/plugins/dotagents"
+          mkdir -p "$marketplace/.agents/plugins" "$marketplace/.claude-plugin"
+          mkdir -p "$plugin/.codex-plugin" "$plugin/.claude-plugin"
+
+          git archive HEAD skills LICENSE | tar -x -C "$plugin"
+          test -n "$(find "$plugin/skills" -mindepth 2 -maxdepth 2 -name SKILL.md -type f -print -quit)"
+
+          cat > "$plugin/.codex-plugin/plugin.json" <<'JSON'
+          {
+            "name": "dotagents",
+            "description": "Kevin Pirnie's coding and WordPress workflow skills.",
+            "skills": "./skills/",
+            "interface": { "displayName": "Dotagents" }
+          }
+          JSON
+
+          cat > "$plugin/.claude-plugin/plugin.json" <<'JSON'
+          {
+            "name": "dotagents",
+            "description": "Kevin Pirnie's coding and WordPress workflow skills."
+          }
+          JSON
+
+          cat > "$marketplace/.agents/plugins/marketplace.json" <<'JSON'
+          {
+            "name": "dotagents",
+            "plugins": [
+              {
+                "name": "dotagents",
+                "source": { "source": "local", "path": "./plugins/dotagents" },
+                "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+                "category": "Productivity"
+              }
+            ]
+          }
+          JSON
+
+          cat > "$marketplace/.claude-plugin/marketplace.json" <<'JSON'
+          {
+            "name": "dotagents",
+            "owner": { "name": "Kevin Pirnie" },
+            "plugins": [{ "name": "dotagents", "source": "./plugins/dotagents" }]
+          }
+          JSON
+
+          (
+            cd "$staging"
+            zip -qr "$RUNNER_TEMP/dotagents-plugin-installer.zip" dotagents
+          )
+          unzip -tq "$RUNNER_TEMP/dotagents-plugin-installer.zip"
+
+      - name: Upload installer ZIP
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          path: ${{ runner.temp }}/dotagents-plugin-installer.zip
+          archive: false
+          if-no-files-found: error
